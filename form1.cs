@@ -13,7 +13,6 @@ using System.Net;
 using System.IO;
 using System.Text.RegularExpressions;
 
-
 namespace WindowsFormsApplication1
 {
     public partial class Form1 : Form
@@ -22,24 +21,43 @@ namespace WindowsFormsApplication1
         {
             InitializeComponent();
         }
-     
-        
-        //Для указания кодировки страницы
         public static Encoding encode = System.Text.Encoding.GetEncoding("utf-8");
-        SerialPort MyPort = new SerialPort("COM19");
-
-        /*
-         // страшный кусок который перебирает все порты
-         var portNames = SerialPort.GetPortNames();
-
-foreach(var port in portNames) {
-    //Try for every portName and break on the first working
-}
-          
-         * */
-
+        SerialPort MyPort = new SerialPort("COM3");
 
         private void button1_Click(object sender, EventArgs e)
+        {
+            int i,j;
+            int[,] z = new int[,] { { 1, 2, 3, 4 }, { 0, 9, 8, 7 }, { 5, 6, 4, 2 } };
+            for (i = 0; i < 4; i++)
+                for (j = 0; j < 3; j++) dataGridView1.Rows[i].Cells[j].Value = Convert.ToString( z[i, j]);
+
+        }
+
+
+        private void dg(DataGridView datagridname, int max_column, int max_row)
+        {
+            int min = 0;//0;
+            for (int i = min; i < max_column + min; i++) datagridname.Columns.Add("Column", i.ToString());
+            for (int i = min; i < max_row ; i++) datagridname.Rows.Add();
+           for (int i = min; i <= max_row ; i++) datagridname.Rows[i - min].HeaderCell.Value = i.ToString();
+            datagridname.AutoResizeColumns();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            dg(dataGridView1, 3, 4);
+            dg(dataGridView2, 3, 4);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+
+       
+            
+            
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
         {
             try
             {
@@ -63,17 +81,22 @@ foreach(var port in portNames) {
                 match = Regex.Match(match, @"[0-9]").ToString();
 
                 textBox1.Text = match;
-                if (match=="1") try
+                if (match == "1") try
                     {
                         MyPort.Open();
+                        MyPort.RtsEnable = true;
+
                     }
                     catch (Exception ex)
                     {
-                        textBox1.Text="Error opening my port: {0}"+ex.Message;
+                        textBox1.Text = "Error opening my port: {0}" + ex.Message;
                     }
-                else try
+                //if (match == "0")
+                else
+                    try
                     {
-                        MyPort.Close();
+                        MyPort.RtsEnable = false;
+                       MyPort.Close();
                     }
                     catch (Exception ex)
                     {
@@ -81,8 +104,6 @@ foreach(var port in portNames) {
                     }
             }
             catch { }
-            
-            
-        }
-    }
-}
+        }    
+        //if (MyPort.RtsEnable()) textBox1.Text="++";
+        }}
